@@ -1,0 +1,27 @@
+{
+  "family": "smartlog-mock",
+  "taskRoleArn":"arn:aws:iam::744004065806:role/taskRDSRole",
+  "containerDefinitions": [
+    {
+      "image": "%REPOSITORY_URI%:v_%BUILD_NUMBER%",
+      "name": "smartlog-mock",
+      "cpu": 256,
+      "memory": 256,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 0
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "ecs-log",
+            "awslogs-region": "ap-southeast-1",
+            "awslogs-stream-prefix": "mock"
+        }
+      }
+    }
+  ]
+}
