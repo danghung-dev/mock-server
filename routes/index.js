@@ -16,19 +16,22 @@ router.post('/', (req, res) => {
   // console.log('body', req.body)
   const body = req.body
   const id = uuid.v4()
-  if (body.postman_url) {
+
+  if (body.postman_url && body.service_name) {
+    const service_name = body.service_name
     axios.get(body.postman_url)
     .then(response => {
       // console.log('res:', response.data)
       const myCollection = response.data
-
+      let routePath = []
       myCollection.requests.map(item => {
         // console.log('item', item)
         const url = new Url(item.url)
         if (item.responses && item.responses.length > 0) {
           console.log('method: ', item.method)
           console.log(url.getPath())
-          const path = "/" + id + url.getPath()
+          const path = "/" + service_name + url.getPath()
+          routePath.push(path)
           const body = JSON.parse(item.responses[0].text)
           if (item.method == 'GET') {
             router.get(path, (req, res) => {
@@ -43,7 +46,7 @@ router.post('/', (req, res) => {
           // console.log('response: ', item.responses)
         }
       })
-      res.status(200).json({id})
+      res.status(200).json({routePath})
     })
 
     .catch(ex => {
