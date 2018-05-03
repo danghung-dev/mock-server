@@ -10,6 +10,19 @@ const router = new Router()
 router.get('/', (req, res) => {
   res.send('Mock server')
 });
+
+const sortrequest = (a,b) => {
+  const a1 = new Url(a.url)
+  const b1 = new Url(b.url)
+  const a_length = (a1.getPath().match(/:/g) || []).length
+  const b_length = (b1.getPath().match(/:/g) || []).length
+  if (a_length > b_length)
+    return 1
+    if (a_length < b_length)
+    return -1;
+  return 0;
+}
+
 // remove route dynamicly runtime
 // https://stackoverflow.com/questions/10378690/remove-route-mappings-in-nodejs-express?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 router.post('/', (req, res) => {
@@ -24,7 +37,8 @@ router.post('/', (req, res) => {
       // console.log('res:', response.data)
       const myCollection = response.data
       let routePath = []
-      myCollection.requests.map(item => {
+      const requests = myCollection.requests.sort(sortrequest)
+      requests.map(item => {
         // console.log('item', item)
         const url = new Url(item.url)
         if (item.responses && item.responses.length > 0) {
